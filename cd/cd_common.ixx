@@ -606,31 +606,31 @@ export std::list<std::pair<std::string, TrackType>> cue_get_entries(const std::f
         auto tokens(tokenize(line, " \t", "\"\""));
         if(tokens.size() == 3)
         {
-            if(strncmp(tokens[0], "FILE", 4))
+            if(tokens[0].substr(0, 4) == "FILE")
                 entry.first = tokens[1];
-            else if(strncmp(tokens[0], "TRACK", 5) && !entry.first.empty())
+            else if(tokens[0].substr(0, 5) == "TRACK" && !entry.first.empty())
             {
-                if(strncmp(tokens[2], "AUDIO", 5))
+                if(tokens[2].substr(0, 5) == "AUDIO")
                     entry.second = TrackType::AUDIO;
-                else if(strncmp(tokens[2], "MODE1/2352", 10))
+                else if(tokens[2].substr(0, 10) == "MODE1/2352")
                     entry.second = TrackType::MODE1_2352;
-                else if(strncmp(tokens[2], "MODE2/2352", 10))
+                else if(tokens[2].substr(0, 10) == "MODE2/2352")
                     entry.second = TrackType::MODE2_2352;
-                else if(strncmp(tokens[2], "CDI/2352", 8))
+                else if(tokens[2].substr(0, 8) == "CDI/2352")
                     entry.second = TrackType::CDI_2352;
-                else if(strncmp(tokens[2], "MODE1/2048", 10))
+                else if(tokens[2].substr(0, 10) == "MODE1/2048")
                     entry.second = TrackType::MODE1_2048;
-                else if(strncmp(tokens[2], "MODE2/2336", 10))
+                else if(tokens[2].substr(0, 10) == "MODE2/2336")
                     entry.second = TrackType::MODE2_2336;
-                else if(strncmp(tokens[2], "CDI/2336", 8))
+                else if(tokens[2].substr(0, 8) == "CDI/2336")
                     entry.second = TrackType::CDI_2336;
-                else if(strncmp(tokens[2], "CDG", 3))
+                else if(tokens[2].substr(0, 3) == "CDG")
                     entry.second = TrackType::CDG;
-                else if(strncmp(tokens[2], "MODE0/2352", 10))
+                else if(tokens[2].substr(0, 10) == "MODE0/2352")
                     entry.second = TrackType::MODE0_2352;
-                else if(strncmp(tokens[2], "MODE2/2048", 10))
+                else if(tokens[2].substr(0, 10) == "MODE2/2048")
                     entry.second = TrackType::MODE2_2048;
-                else if(strncmp(tokens[2], "MODE2/2324", 10))
+                else if(tokens[2].substr(0, 10) == "MODE2/2324")
                     entry.second = TrackType::MODE2_2324;
                 else
                     entry.second = TrackType::AUDIO;
