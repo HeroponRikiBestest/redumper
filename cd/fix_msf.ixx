@@ -44,7 +44,7 @@ void regenerate_data_sector(Sector &sector, int32_t lba)
 
     if(sector.header.mode == 1)
     {
-        std::fill_n(sector.mode1.intermediate, sizeof(sector.mode1.intermediate), 0x00);
+        std::copy_n(CD_DATA_INTERMEDIATE, sizeof(CD_DATA_INTERMEDIATE), sector.mode1.intermediate);
 
         Sector::ECC ecc = ECC().Generate((uint8_t *)&sector.header);
         std::copy_n(ecc.p_parity, sizeof(ecc.p_parity), sector.mode1.ecc.p_parity);
@@ -124,7 +124,7 @@ export int redumper_fix_msf(Context &ctx, Options &options)
     std::list<std::filesystem::path> tracks;
     if(std::filesystem::exists(image_prefix + ".cue"))
         for(auto const &t : cue_get_entries(image_prefix + ".cue"))
-            if(t.second)
+            if(t.second != TrackType::AUDIO && t.second != TrackType::CDG)
                 tracks.push_back(std::filesystem::path(options.image_path) / t.first);
 
     if(tracks.empty())

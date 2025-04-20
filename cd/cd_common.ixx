@@ -43,6 +43,23 @@ export constexpr int32_t LBA_START = -45150; // MSVC internal compiler error: MS
 export constexpr uint32_t LEADOUT_OVERREAD_COUNT = 100;
 
 
+export enum class TrackType : uint8_t
+{
+    AUDIO = 0,
+    MODE1_2352 = 1,
+    MODE2_2352 = 2,
+    CDI_2352 = 3,
+    MODE1_2048 = 4,
+    MODE2_2336 = 5,
+    CDI_2336 = 6,
+    CDG = 7,
+    MODE0_2352 = 8,
+    MODE2_2048 = 9,
+    MODE2_2324 = 10,
+    ISO = 255
+};
+
+
 export int32_t sample_offset_a2r(uint32_t absolute)
 {
     return absolute + (LBA_START * CD_DATA_SIZE_SAMPLES);
@@ -574,15 +591,15 @@ export std::string track_extract_basename(std::string str)
 }
 
 
-export std::list<std::pair<std::string, bool>> cue_get_entries(const std::filesystem::path &cue_path)
+export std::list<std::pair<std::string, TrackType>> cue_get_entries(const std::filesystem::path &cue_path)
 {
-    std::list<std::pair<std::string, bool>> entries;
+    std::list<std::pair<std::string, TrackType>> entries;
 
     std::fstream fs(cue_path, std::fstream::in);
     if(!fs.is_open())
         throw_line("unable to open file ({})", cue_path.filename().string());
 
-    std::pair<std::string, bool> entry;
+    std::pair<std::string, TrackType> entry;
     std::string line;
     while(std::getline(fs, line))
     {
@@ -593,7 +610,30 @@ export std::list<std::pair<std::string, bool>> cue_get_entries(const std::filesy
                 entry.first = tokens[1];
             else if(tokens[0] == "TRACK" && !entry.first.empty())
             {
-                entry.second = tokens[2] != "AUDIO";
+                if(tokens[2] == "AUDIO")
+                    entry.second = TrackType::AUDIO;
+                else if(tokens[2] == "MODE1/2352")
+                    entry.second = TrackType::MODE1_2352;
+                else if(tokens[2] == "MODE2/2352")
+                    entry.second = TrackType::MODE2_2352;
+                else if(tokens[2] == "CDI/2352")
+                    entry.second = TrackType::CDI_2352;
+                else if(tokens[2] == "MODE1/2048")
+                    entry.second = TrackType::MODE1_2048;
+                else if(tokens[2] == "MODE2/2336")
+                    entry.second = TrackType::MODE2_2336;
+                else if(tokens[2] == "CDI/2336")
+                    entry.second = TrackType::CDI_2336;
+                else if(tokens[2] == "CDG")
+                    entry.second = TrackType::CDG;
+                else if(tokens[2] == "MODE0/2352")
+                    entry.second = TrackType::MODE0_2352;
+                else if(tokens[2] == "MODE2/2048")
+                    entry.second = TrackType::MODE2_2048;
+                else if(tokens[2] == "MODE2/2324")
+                    entry.second = TrackType::MODE2_2324;
+                else
+                    entry.second = TrackType::AUDIO;
                 entries.push_back(entry);
                 entry.first.clear();
             }
